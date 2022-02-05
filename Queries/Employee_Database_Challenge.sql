@@ -43,10 +43,12 @@ SELECT * FROM unique_Rtitles
 
 -- Find the number of employees by their most recent job title who are about to retire
 SELECT COUNT(ut.title),ut.title
-INTO retiring_titles
-FROM unique_titles as ut
+INTO retiring_titles4
+FROM unique_rtitles as ut
 GROUP BY ut.title
 ORDER BY COUNT DESC;
+
+Select * FROM retiring_titles4;
 
 -- Unique retiring titles(72458)
 SELECT ut.emp_no,
@@ -80,7 +82,7 @@ ORDER BY e.emp_no,ti.from_date DESC;
 
 --Deliverable 3: How many roles will need to be filled as the "silver tsunami" begins to make an impact?
 
---Roles per Staff and Departament (90398 titles)
+--Roles per Staff and Department
 
 SELECT DISTINCT ON (rt.emp_no) 
 	rt.emp_no,
@@ -96,13 +98,33 @@ INNER JOIN departments as d
 ON (d.dept_no = de.dept_no)
 ORDER BY rt.emp_no, rt.to_date DESC;
 
--- How many roles will need to be fill per title and department?
+-- How many roles will need to be filled per title and department?
 
-SELECT ut.dept_name, ut.title, COUNT(ut.title) 
-INTO roles_to_fill_T_D
-FROM (SELECT title, dept_name from unique_titles_department) as ut
-GROUP BY ut.dept_name, ut.title
-ORDER BY ut.dept_name DESC;
+SELECT DISTINCT ON (retirement_titles.emp_no) retirement_titles.emp_no,
+	retirement_titles.first_name,
+    retirement_titles.last_name,
+	retirement_titles.title
+INTO unique_titles
+FROM retirement_titles
+ORDER BY retirement_titles.emp_no, retirement_titles.to_date DESC;
+
+SELECT * FROM unique_titles
+
+SELECT title, COUNT(*)
+INTO retiring_titles2
+FROM unique_titles
+GROUP BY title
+ORDER BY 2 DESC
+
+SELECT * FROM retiring_titles2;
+
+SELECT COUNT (ut.title), ut.title
+INTO retiring_titles3
+FROM unique_titles as ut
+GROUP BY ut.title
+ORDER BY count DESC;
+
+SELECT * FROM retiring_titles3;
 
 -- Is there qualified staff to mentor next round?
 
@@ -112,3 +134,5 @@ FROM (SELECT dept_name,title FROM unique_titles_department) as ut
 WHERE ut.title IN('Senior Staff','Senior Engineer','Technique Leader','Manager')
 GROUP BY ut.dept_name,ut.title
 ORDER BY ut.dept_name DESC;
+
+DROP TABLE unique_titles;
